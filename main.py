@@ -52,6 +52,8 @@ def main():
     cam = cv2.VideoCapture(0)
     cv2.namedWindow('cam_screen')
 
+    low_ear_frame_counter = 0
+
     while True:
         ret, frame = cam.read()
 
@@ -78,6 +80,22 @@ def main():
             cv2.drawContours(frame, [right_eye_hull], -1, (0, 255, 0), 1)
             lip_shape = shape[48: 60]
             cv2.drawContours(frame, [lip_shape], -1, (0, 255, 0), 1)
+
+            if average_EAR < constants.AVERAGE_EAR_THRESHOLD:
+                low_ear_frame_counter += 1
+                if low_ear_frame_counter > \
+                        constants.LOW_EAR_CONSECUTIVE_FRAMES:
+                    cv2.putText(
+                        frame,
+                        "DROWSINESS ALERT!",
+                        (10, 30),
+                        cv2.FONT_HERSHEY_COMPLEX,
+                        0.7,
+                        (255, 0, 0),
+                        2
+                    )
+            else:
+                low_ear_frame_counter = 0
 
         cv2.imshow('cam_screen', frame)
 
