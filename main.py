@@ -63,7 +63,19 @@ def main():
             shape = predictor(frame, face)
             shape = face_utils.shape_to_np(shape)
 
-            eye = calculateEAR(shape)
+            eye_details = calculateEAR(shape)
+            average_EAR = eye_details[0]
+            left_eye = eye_details[1]
+            right_eye = eye_details[2]
+
+            lip_distance = calculateLipDistance(shape)
+
+            left_eye_hull = cv2.convexHull(left_eye)
+            right_eye_hull = cv2.convexHull(right_eye)
+            cv2.drawContours(frame, [left_eye_hull], -1, (0, 255, 0), 1)
+            cv2.drawContours(frame, [right_eye_hull], -1, (0, 255, 0), 1)
+            lip_shape = shape[48: 60]
+            cv2.drawContours(frame, [lip_shape], -1, (0, 255, 0), 1)
 
         cv2.imshow('cam_screen', frame)
 
