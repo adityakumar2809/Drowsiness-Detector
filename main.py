@@ -4,6 +4,8 @@ import numpy as np
 from imutils import face_utils
 from scipy.spatial import distance
 
+import constants
+
 
 def eyeAspectRatio(eye):
     A = distance.euclidean(eye[1], eye[5])
