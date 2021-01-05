@@ -1,10 +1,21 @@
 import cv2
 import dlib
+import pyttsx3
 import numpy as np
 from imutils import face_utils
 from scipy.spatial import distance
+from threading import Thread
 
 import constants
+
+
+def alertUser(message):
+    global currently_speaking
+    global engine
+
+    engine.say(message)
+    engine.runAndWait()
+    currently_speaking = False
 
 
 def eyeAspectRatio(eye):
@@ -53,6 +64,7 @@ def main():
     cv2.namedWindow('cam_screen')
 
     low_ear_frame_counter = 0
+    global currently_speaking
 
     while True:
         ret, frame = cam.read()
@@ -85,6 +97,14 @@ def main():
                 low_ear_frame_counter += 1
                 if low_ear_frame_counter > \
                         constants.LOW_EAR_CONSECUTIVE_FRAMES:
+                    if not currently_speaking:
+                        currently_speaking = True
+                        t = Thread(
+                            target=alertUser,
+                            args=('Please wake up master!',)
+                        )
+                        t.daemon = True
+                        t.start()
                     cv2.putText(
                         frame,
                         "DROWSINESS ALERT!",
@@ -98,6 +118,14 @@ def main():
                 low_ear_frame_counter = 0
 
             if lip_distance > constants.LIP_DISTANCE_THRESHOLD:
+                if not currently_speaking:
+                    currently_speaking = True
+                    t = Thread(
+                        target=alertUser,
+                        args=('Not a good time to sleep master!',)
+                    )
+                    t.daemon = True
+                    t.start()
                 cv2.putText(
                     frame,
                     "YAWN ALERT!",
@@ -120,4 +148,8 @@ def main():
 
 
 if __name__ == "__main__":
+    currently_speaking = False
+    engine = pyttsx3.init('sapi5')
+    voices = engine.getProperty('voices')
+    engine.setProperty('voice', voices[0].id)
     main()
