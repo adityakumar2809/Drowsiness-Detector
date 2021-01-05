@@ -20,7 +20,7 @@ def main():
             break
 
     cam.release()
-    cv2.distroyAllWindows()
+    cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
