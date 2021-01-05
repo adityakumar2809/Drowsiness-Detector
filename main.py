@@ -97,6 +97,17 @@ def main():
             else:
                 low_ear_frame_counter = 0
 
+            if lip_distance > constants.LIP_DISTANCE_THRESHOLD:
+                cv2.putText(
+                    frame,
+                    "YAWN ALERT!",
+                    (10, 60),
+                    cv2.FONT_HERSHEY_COMPLEX,
+                    0.7,
+                    (255, 0, 0),
+                    2
+                )
+
         cv2.imshow('cam_screen', frame)
 
         k = cv2.waitKey(1)
