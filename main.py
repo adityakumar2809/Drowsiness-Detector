@@ -111,7 +111,7 @@ def main():
                         (10, 30),
                         cv2.FONT_HERSHEY_COMPLEX,
                         0.7,
-                        (255, 0, 0),
+                        (0, 0, 255),
                         2
                     )
             else:
@@ -132,7 +132,7 @@ def main():
                     (10, 60),
                     cv2.FONT_HERSHEY_COMPLEX,
                     0.7,
-                    (255, 0, 0),
+                    (0, 0, 255),
                     2
                 )
 
