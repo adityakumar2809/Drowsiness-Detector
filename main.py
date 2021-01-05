@@ -18,6 +18,15 @@ def main():
             print('Failed to grab the image')
             break
 
+        faces = detector(frame, 0)
+
+        for (i, face) in enumerate(faces):
+            shape = predictor(frame, face)
+            shape = face_utils.shape_to_np(shape)
+
+            for (x, y) in shape:
+                cv2.circle(frame, (x, y), 2, (0, 255, 0), -1)
+
         cv2.imshow('cam_screen', frame)
 
         k = cv2.waitKey(1)
