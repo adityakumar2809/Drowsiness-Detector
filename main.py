@@ -1,6 +1,30 @@
 import cv2
 import dlib
 from imutils import face_utils
+from scipy.spatial import distance
+
+
+def eyeAspectRatio(eye):
+    A = distance.euclidean(eye[1], eye[5])
+    B = distance.euclidean(eye[2], eye[4])
+    C = distance.euclidean(eye[0], eye[3])
+    ear = (A + B) / (2.0 * C)
+    return ear
+
+
+def calculateEAR(shape):
+    (left_start, left_end) = face_utils.FACIAL_LANDMARKS_IDXS['left_eye']
+    (right_start, right_end) = face_utils.FACIAL_LANDMARKS_IDXS['right_eye']
+
+    left_eye = shape[left_start: left_end]
+    right_eye = shape[right_start: right_end]
+
+    left_EAR = eyeAspectRatio(left_eye)
+    right_EAR = eyeAspectRatio(right_eye)
+
+    average_EAR = (left_EAR + right_EAR) / 2.0
+
+    return (average_EAR, left_eye, right_eye)
 
 
 def main():
@@ -20,12 +44,18 @@ def main():
 
         faces = detector(frame, 0)
 
-        for (i, face) in enumerate(faces):
+        for face in faces:
             shape = predictor(frame, face)
             shape = face_utils.shape_to_np(shape)
 
-            for (x, y) in shape:
-                cv2.circle(frame, (x, y), 2, (0, 255, 0), -1)
+            eye = calculateEAR(shape)
+
+        # for (i, face) in enumerate(faces):
+        #     shape = predictor(frame, face)
+        #     shape = face_utils.shape_to_np(shape)
+
+        #     for (x, y) in shape:
+        #         cv2.circle(frame, (x, y), 2, (0, 255, 0), -1)
 
         cv2.imshow('cam_screen', frame)
 
