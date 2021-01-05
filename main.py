@@ -1,5 +1,6 @@
 import cv2
 import dlib
+import numpy as np
 from imutils import face_utils
 from scipy.spatial import distance
 
@@ -27,6 +28,20 @@ def calculateEAR(shape):
     return (average_EAR, left_eye, right_eye)
 
 
+def calculateLipDistance(shape):
+    top_lip = shape[50: 53]
+    top_lip = np.concatenate((top_lip, shape[61: 64]))
+
+    bottom_lip = shape[56: 59]
+    bottom_lip = np.concatenate((bottom_lip, shape[65: 68]))
+
+    top_mean = np.mean(top_lip, axis=0)
+    bottom_mean = np.mean(bottom_lip, axis=0)
+
+    distance = abs(top_mean[1] - bottom_mean[1])
+    return distance
+
+
 def main():
     p = "shape_predictor_68_face_landmarks.dat"
     detector = dlib.get_frontal_face_detector()
@@ -49,13 +64,6 @@ def main():
             shape = face_utils.shape_to_np(shape)
 
             eye = calculateEAR(shape)
-
-        # for (i, face) in enumerate(faces):
-        #     shape = predictor(frame, face)
-        #     shape = face_utils.shape_to_np(shape)
-
-        #     for (x, y) in shape:
-        #         cv2.circle(frame, (x, y), 2, (0, 255, 0), -1)
 
         cv2.imshow('cam_screen', frame)
 
